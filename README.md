@@ -1,23 +1,44 @@
 # SQL Lab
 
-12 fictional banking investigations with embedded SQLite and offline SQL coaching.
+60 practical SQL exercises using fictional banking and operations data: the original 12 plus 48 new exercises. No mystery storyline. The mobile Midnight Plum design and solid iPhone safe-area header are retained.
 
-## Run
+## Use the app
 
-Open `index.html` in a browser that supports JavaScript and Web Workers, or serve it with any static web host. No installation, build step, backend or external API is required. SQLite licence notices are included in the HTML.
+Open `index.html` in a current browser with JavaScript and Web Workers, or serve it with any static host. No installation, backend, external API, build step or network request is needed to run the downloaded file. SQLite and its licence are embedded.
 
-Drafts and progress save in the current browser when storage is available. Progress does not automatically transfer between devices, browsers or domains. Downloaded HTML works offline; a hosted first visit requires internet and does not install an offline cache.
+The learning order starts with SELECT, WHERE, sorting and pagination, then DISTINCT/NULL, totals and groups, joins, subqueries, CASE, CTEs, windows and operational reporting. Each exercise shows a concise task, exact result fields, ordering, a terminology tip, real sample rows and expandable schema/SQL inspection.
 
-## Verification
+SQL Coach is a bounded offline rules engine. It responds to syntax, output mismatches and recent attempts. Three hint stages guide the current task. A worked solution unlocks after an unsuccessful attempt and two hint stages; revealing it marks the exercise assisted and leaves the draft unchanged. Inspection does not grade or complete an exercise.
 
-The exported HTML matches `SQL-Lab-Guided-Final.html` exactly (SHA-256: `8b41476af8c08455f9a36591ad1dfc7927f791bbe8927ac4a80a4fdd21faf983`).
+Drafts, completion and assisted markers save in this browser when storage is available. The original integer exercise IDs and storage key are preserved even though the learning order is longer. Each dataset has separate drafts. Moving the HTML file, changing domains or using another browser/device may use separate storage; there is no account sync.
 
-Passed: static startup under `/sqllab/`, all 12 canonical solutions with network offline, solution gating on an incorrect attempt, draft persistence on reload, standalone offline startup and query execution. No external HTTP requests or uncaught page errors were observed. Physical iPhone Safari remains unverified.
+**Offline boundary:** a downloaded HTML file starts and runs SQL offline. A hosted first visit requires internet; the app does not install a service worker or guarantee offline reload of a hosted URL.
 
-## Optional GitHub Pages setup
+## Maintain the curriculum
 
-Publishing is pending owner approval. Once the pull request is approved and merged, an administrator can select **Settings → Pages → Deploy from a branch → main → /(root) → Save**. No build configuration is required.
+`curriculum.json` contains the 48 new exercise objects and the complete learning order. IDs 0–11 remain the original exercises; new IDs are 12–59. A small adapter lets the existing app consume the new metadata. Do not renumber IDs: saved drafts and progress depend on them.
 
-The expected default address is https://nightangle-hub.github.io/sqllab/; this address is not a verified live deployment.
+Edit metadata and run `npm run build` to embed it into the single downloadable `index.html`. The JSON source is not fetched at runtime. Each new object contains task, columns, sort contract, reference SQL, starter, explanation, three hints, term chips and a deliberately wrong query for regression testing. Equivalent SQLite queries pass when their results match; the grader does not require specific syntax such as WITH.
 
-[GitHub Pages setup documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+Every answer is executed against its practice dataset and five hidden fixtures. These vary IDs, dates, amounts, names, regions, channels and membership, and include thresholds, ties, duplicate logs and empty transaction/log tables. Grading checks names/order of columns, values, duplicate multiplicity and required row order. This is finite result-based testing, not a proof for every possible dataset.
+
+## Run verification
+
+Requires Node.js 20+ for development only:
+
+```sh
+npm ci
+npx playwright install chromium webkit
+npm run build
+npm test
+```
+
+On Linux, use `npx playwright install --with-deps chromium webkit` if browser system dependencies are missing. Tests write screenshots and detailed JSON to ignored `test-results/`. Baseline contracts in `scripts/original-regression.json` were captured from main commit `dc0314fb9bf94f9474f0672c23c78cdd0fa56c06`; do not regenerate them to hide a regression.
+
+See [VERIFICATION.md](VERIFICATION.md) for exact coverage and device limitations.
+
+## Design reference and release status
+
+[SQLBolt](https://sqlbolt.com/) informed short concept explanations, visible practice tasks and a gradual progression. All banking tasks, data and wording here are original; no SQLBolt text, puzzles or assets were copied.
+
+This expansion is prepared on a feature branch for review. It must not be merged or published without the owner's explicit approval.

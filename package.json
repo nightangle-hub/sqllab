@@ -1,0 +1,6 @@
+{
+  "name": "sql-lab",
+  "private": true,
+  "scripts": {"build": "node scripts/build.cjs", "test": "node scripts/test.cjs"},
+  "devDependencies": {"playwright": "1.65.0"}
+}

@@ -1,0 +1,1225 @@
+{
+  "version": 1,
+  "path": [
+    12,
+    13,
+    14,
+    0,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    1,
+    22,
+    23,
+    2,
+    24,
+    25,
+    26,
+    27,
+    28,
+    3,
+    29,
+    30,
+    31,
+    4,
+    32,
+    7,
+    33,
+    5,
+    34,
+    35,
+    6,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    8,
+    47,
+    48,
+    49,
+    50,
+    11,
+    51,
+    52,
+    53,
+    54,
+    10,
+    55,
+    56,
+    57,
+    9,
+    58,
+    59
+  ],
+  "exercises": [
+    {
+      "id": 12,
+      "stage": "01 · Read rows",
+      "title": "Read the account register",
+      "find": "List every account ID and customer name.",
+      "columns": [
+        "account_id",
+        "customer_name"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT account_id, customer_name FROM accounts ORDER BY account_id;",
+      "tip": "SELECT chooses columns; FROM names their table. One account is one row.",
+      "hints": [
+        "Which table owns customer_name?",
+        "Select two fields from accounts.",
+        "Sort the account identifier from low to high."
+      ],
+      "wrong": "SELECT account_id, region AS customer_name FROM accounts ORDER BY account_id;",
+      "terms": [
+        "SELECT",
+        "FROM"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 13,
+      "stage": "01 · Read rows",
+      "title": "Return payment amounts",
+      "find": "List every payment ID and amount, including all statuses.",
+      "columns": [
+        "txn_id",
+        "amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT txn_id, amount FROM transactions ORDER BY txn_id;",
+      "tip": "Projection means choosing fields without changing the rows.",
+      "hints": [
+        "Read transactions rather than accounts.",
+        "Return only the two requested fields.",
+        "ORDER BY controls the result sequence."
+      ],
+      "wrong": "SELECT txn_id, -amount AS amount FROM transactions ORDER BY txn_id;",
+      "terms": [
+        "SELECT",
+        "Column"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 14,
+      "stage": "02 · Filter and sort",
+      "title": "Filter the active register",
+      "find": "List accounts whose account_status is active.",
+      "columns": [
+        "account_id",
+        "customer_name"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT account_id, customer_name FROM accounts WHERE account_status='active' ORDER BY account_id;",
+      "tip": "WHERE keeps only rows satisfying a condition. Text values use single quotes.",
+      "hints": [
+        "Inspect account_status values in Data.",
+        "Compare account_status with the requested text.",
+        "Put WHERE before ORDER BY."
+      ],
+      "wrong": "SELECT account_id, customer_name FROM accounts WHERE account_status<>'active' ORDER BY account_id;",
+      "terms": [
+        "WHERE",
+        "Literal"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 15,
+      "stage": "02 · Filter and sort",
+      "title": "Include a threshold",
+      "find": "List transactions worth at least 1000 AUD, regardless of status.",
+      "columns": [
+        "txn_id",
+        "amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT txn_id, amount FROM transactions WHERE amount>=1000 ORDER BY txn_id;",
+      "tip": "At least includes equality. Amounts here are whole AUD.",
+      "hints": [
+        "Decide whether exactly 1000 belongs.",
+        "Filter the numeric amount field.",
+        "Use a comparison that includes the boundary."
+      ],
+      "wrong": "SELECT txn_id, amount FROM transactions WHERE amount>1000 ORDER BY txn_id;",
+      "terms": [
+        "WHERE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 16,
+      "stage": "02 · Filter and sort",
+      "title": "Combine alternatives",
+      "find": "List payments whose status is failed or pending.",
+      "columns": [
+        "txn_id",
+        "status"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT txn_id, status FROM transactions WHERE status IN ('failed','pending') ORDER BY txn_id;",
+      "tip": "IN tests membership in a list. OR can express the same logic.",
+      "hints": [
+        "Keep either of two statuses.",
+        "IN takes a parenthesized list of quoted text.",
+        "Do not require one row to have both statuses."
+      ],
+      "wrong": "SELECT txn_id, status FROM transactions WHERE status='failed' ORDER BY txn_id;",
+      "terms": [
+        "WHERE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 17,
+      "stage": "02 · Filter and sort",
+      "title": "Select a closed interval",
+      "find": "List payments from 500 through 1000 AUD, including both endpoints.",
+      "columns": [
+        "txn_id",
+        "amount"
+      ],
+      "sort": "amount ascending, then txn_id ascending",
+      "sql": "SELECT txn_id, amount FROM transactions WHERE amount BETWEEN 500 AND 1000 ORDER BY amount,txn_id;",
+      "tip": "BETWEEN includes both endpoints. A second sort key makes ties deterministic.",
+      "hints": [
+        "Test both the lower and upper boundary.",
+        "BETWEEN is inclusive in SQLite.",
+        "Use the ID as the final sort key."
+      ],
+      "wrong": "SELECT txn_id, amount FROM transactions WHERE amount>500 AND amount<1000 ORDER BY amount,txn_id;",
+      "terms": [
+        "WHERE",
+        "ORDER BY"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 18,
+      "stage": "02 · Filter and sort",
+      "title": "Read a date interval",
+      "find": "List payments dated on or after 2026-10-05 and before 2026-10-10.",
+      "columns": [
+        "txn_id",
+        "txn_date"
+      ],
+      "sort": "txn_date ascending, then txn_id ascending",
+      "sql": "SELECT txn_id, txn_date FROM transactions WHERE txn_date>='2026-10-05' AND txn_date<'2026-10-10' ORDER BY txn_date,txn_id;",
+      "tip": "A half-open interval includes its start and excludes its end. ISO dates sort chronologically as text.",
+      "hints": [
+        "The start date belongs; the end date does not.",
+        "Combine the two date conditions with AND.",
+        "Order by date and then ID."
+      ],
+      "wrong": "SELECT txn_id, txn_date FROM transactions WHERE txn_date BETWEEN '2026-10-05' AND '2026-10-10' ORDER BY txn_date,txn_id;",
+      "terms": [
+        "WHERE",
+        "AND"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 19,
+      "stage": "02 · Filter and sort",
+      "title": "Find a name prefix",
+      "find": "List customers whose name starts with A. Use SQLite LIKE, which is case-insensitive for ASCII by default.",
+      "columns": [
+        "account_id",
+        "customer_name"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT account_id, customer_name FROM accounts WHERE customer_name LIKE 'A%' ORDER BY account_id;",
+      "tip": "In LIKE, % matches any sequence of characters.",
+      "hints": [
+        "Match customer_name, not account_status.",
+        "The prefix must be at the beginning.",
+        "Put the wildcard after the letter."
+      ],
+      "wrong": "SELECT account_id, customer_name FROM accounts WHERE customer_name LIKE '%A%' ORDER BY account_id;",
+      "terms": [
+        "WHERE",
+        "Literal"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 20,
+      "stage": "02 · Filter and sort",
+      "title": "Prioritize the largest payments",
+      "find": "Return the three largest payments across all statuses. Break equal amounts by lowest txn_id.",
+      "columns": [
+        "txn_id",
+        "amount"
+      ],
+      "sort": "amount descending, then txn_id ascending",
+      "sql": "SELECT txn_id, amount FROM transactions ORDER BY amount DESC,txn_id LIMIT 3;",
+      "tip": "Sort before LIMIT so the cap selects the correct rows.",
+      "hints": [
+        "Choose the descending amount direction.",
+        "Resolve equal amounts with ascending ID.",
+        "Apply a three-row cap after sorting."
+      ],
+      "wrong": "SELECT txn_id, amount FROM transactions ORDER BY amount,txn_id LIMIT 3;",
+      "terms": [
+        "ORDER BY",
+        "LIMIT"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 21,
+      "stage": "02 · Filter and sort",
+      "title": "Read the second page",
+      "find": "Skip the first three transactions by txn_id, then return the next three.",
+      "columns": [
+        "txn_id",
+        "amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT txn_id, amount FROM transactions ORDER BY txn_id LIMIT 3 OFFSET 3;",
+      "tip": "OFFSET skips rows after sorting. Stable ordering prevents overlapping pages.",
+      "hints": [
+        "Order the full set first.",
+        "Keep three rows after skipping three.",
+        "OFFSET works with LIMIT in SQLite."
+      ],
+      "wrong": "SELECT txn_id, amount FROM transactions ORDER BY txn_id LIMIT 3;",
+      "terms": [
+        "LIMIT",
+        "ORDER BY"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 22,
+      "stage": "03 · Distinct and missing values",
+      "title": "List service regions",
+      "find": "Return each region once from accounts.",
+      "columns": [
+        "region"
+      ],
+      "sort": "region ascending",
+      "sql": "SELECT DISTINCT region FROM accounts ORDER BY region;",
+      "tip": "DISTINCT removes duplicate result rows. It does not count them.",
+      "hints": [
+        "Several accounts share a region.",
+        "Select just region before deduplicating.",
+        "Sort the distinct region names."
+      ],
+      "wrong": "SELECT region FROM accounts ORDER BY region;",
+      "terms": [
+        "SELECT"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 23,
+      "stage": "03 · Distinct and missing values",
+      "title": "List channel combinations",
+      "find": "Return each distinct status and channel combination present in transactions.",
+      "columns": [
+        "status",
+        "channel"
+      ],
+      "sort": "status ascending, then channel ascending",
+      "sql": "SELECT DISTINCT status,channel FROM transactions ORDER BY status,channel;",
+      "tip": "DISTINCT applies to the entire selected row, so pairs are deduplicated together.",
+      "hints": [
+        "A status may use multiple channels.",
+        "Deduplicate the two-field combination.",
+        "Sort both fields in the stated sequence."
+      ],
+      "wrong": "SELECT status,channel FROM transactions ORDER BY status,channel;",
+      "terms": [
+        "SELECT",
+        "ORDER BY"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 24,
+      "stage": "03 · Distinct and missing values",
+      "title": "Review completed work",
+      "find": "List logs with a nonmissing resolved_at date.",
+      "columns": [
+        "log_id",
+        "resolved_at"
+      ],
+      "sort": "log_id ascending",
+      "sql": "SELECT log_id,resolved_at FROM logs WHERE resolved_at IS NOT NULL ORDER BY log_id;",
+      "tip": "IS NOT NULL finds recorded values. NULL is different from an empty string.",
+      "hints": [
+        "Inspect which cells contain NULL.",
+        "Keep the opposite of missing dates.",
+        "Use IS NOT NULL rather than <> NULL."
+      ],
+      "wrong": "SELECT log_id,resolved_at FROM logs WHERE resolved_at<>NULL ORDER BY log_id;",
+      "terms": [
+        "NULL"
+      ],
+      "starter": "SELECT *\nFROM logs;"
+    },
+    {
+      "id": 25,
+      "stage": "03 · Distinct and missing values",
+      "title": "Label missing resolution dates",
+      "find": "For every log, return its date or the text open when the date is missing. Name it resolution_label.",
+      "columns": [
+        "log_id",
+        "resolution_label"
+      ],
+      "sort": "log_id ascending",
+      "sql": "SELECT log_id,COALESCE(resolved_at,'open') AS resolution_label FROM logs ORDER BY log_id;",
+      "tip": "COALESCE returns the first non-NULL argument without removing rows.",
+      "hints": [
+        "Retain both resolved and unresolved logs.",
+        "Supply a fallback text value for missing dates.",
+        "Name the resulting expression resolution_label."
+      ],
+      "wrong": "SELECT log_id,'open' AS resolution_label FROM logs ORDER BY log_id;",
+      "terms": [
+        "COALESCE",
+        "NULL"
+      ],
+      "starter": "SELECT *\nFROM logs;"
+    },
+    {
+      "id": 26,
+      "stage": "04 · Totals and groups",
+      "title": "Count all payments",
+      "find": "Return one row counting all transaction rows as transaction_count.",
+      "columns": [
+        "transaction_count"
+      ],
+      "sort": "Any order",
+      "sql": "SELECT COUNT(*) AS transaction_count FROM transactions;",
+      "tip": "COUNT(*) returns zero even when its input is empty.",
+      "hints": [
+        "This task needs one scalar result.",
+        "Count rows, not amount values.",
+        "Use the required output alias."
+      ],
+      "wrong": "SELECT COUNT(*)+1 AS transaction_count FROM transactions;",
+      "terms": [
+        "COUNT",
+        "AS"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 27,
+      "stage": "04 · Totals and groups",
+      "title": "Count resolved dates",
+      "find": "Return total log rows as log_count and nonmissing resolved_at values as resolved_count.",
+      "columns": [
+        "log_count",
+        "resolved_count"
+      ],
+      "sort": "Any order",
+      "sql": "SELECT COUNT(*) AS log_count,COUNT(resolved_at) AS resolved_count FROM logs;",
+      "tip": "COUNT(column) ignores NULL, while COUNT(*) counts every row.",
+      "hints": [
+        "Use two counts over the same source.",
+        "One count must ignore missing dates.",
+        "Compare COUNT(*) with COUNT(resolved_at)."
+      ],
+      "wrong": "SELECT COUNT(*) AS log_count,COUNT(*) AS resolved_count FROM logs;",
+      "terms": [
+        "COUNT",
+        "NULL"
+      ],
+      "starter": "SELECT *\nFROM logs;"
+    },
+    {
+      "id": 28,
+      "stage": "04 · Totals and groups",
+      "title": "Summarize posted amounts",
+      "find": "For posted transactions, return SUM(amount) as total_amount, MIN(amount) as smallest_amount, MAX(amount) as largest_amount. Leave SQLite NULL totals unchanged on empty input.",
+      "columns": [
+        "total_amount",
+        "smallest_amount",
+        "largest_amount"
+      ],
+      "sort": "Any order",
+      "sql": "SELECT SUM(amount) AS total_amount,MIN(amount) AS smallest_amount,MAX(amount) AS largest_amount FROM transactions WHERE status='posted';",
+      "tip": "SUM, MIN and MAX summarize numeric values. Unlike COUNT, these return NULL over empty input.",
+      "hints": [
+        "Filter rows before summarizing.",
+        "Use three different aggregate functions.",
+        "Do not convert an empty sum to zero for this task."
+      ],
+      "wrong": "SELECT SUM(amount) AS total_amount,MAX(amount) AS smallest_amount,MIN(amount) AS largest_amount FROM transactions WHERE status='posted';",
+      "terms": [
+        "SUM",
+        "WHERE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 29,
+      "stage": "04 · Totals and groups",
+      "title": "Compare average payment sizes",
+      "find": "Return the average amount for each channel as average_amount, rounded to two decimal places.",
+      "columns": [
+        "channel",
+        "average_amount"
+      ],
+      "sort": "channel ascending",
+      "sql": "SELECT channel,ROUND(AVG(amount),2) AS average_amount FROM transactions GROUP BY channel ORDER BY channel;",
+      "tip": "AVG computes a mean; ROUND controls reported precision.",
+      "hints": [
+        "One output row represents one channel.",
+        "Average amount inside each group.",
+        "Round the mean rather than the source amounts."
+      ],
+      "wrong": "SELECT channel,SUM(amount) AS average_amount FROM transactions GROUP BY channel ORDER BY channel;",
+      "terms": [
+        "GROUP BY",
+        "AS"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 30,
+      "stage": "04 · Totals and groups",
+      "title": "Measure regional coverage",
+      "find": "Count accounts per region as account_count. Include every account status.",
+      "columns": [
+        "region",
+        "account_count"
+      ],
+      "sort": "region ascending",
+      "sql": "SELECT region,COUNT(*) AS account_count FROM accounts GROUP BY region ORDER BY region;",
+      "tip": "The grouping field sets the unit of each output row.",
+      "hints": [
+        "Read the account register.",
+        "Group by region before counting.",
+        "Keep active, frozen and closed accounts."
+      ],
+      "wrong": "SELECT region,COUNT(*) AS account_count FROM accounts WHERE account_status='active' GROUP BY region ORDER BY region;",
+      "terms": [
+        "GROUP BY",
+        "COUNT"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 31,
+      "stage": "04 · Totals and groups",
+      "title": "Build a channel queue matrix",
+      "find": "Count payments for each channel and status as transaction_count.",
+      "columns": [
+        "channel",
+        "status",
+        "transaction_count"
+      ],
+      "sort": "channel ascending, then status ascending",
+      "sql": "SELECT channel,status,COUNT(*) AS transaction_count FROM transactions GROUP BY channel,status ORDER BY channel,status;",
+      "tip": "Grouping by two fields produces one row per combination present.",
+      "hints": [
+        "The unit is a channel/status pair.",
+        "Put both fields in GROUP BY.",
+        "Count rows within each pair."
+      ],
+      "wrong": "SELECT channel,status,COUNT(*) AS transaction_count FROM transactions GROUP BY channel ORDER BY channel,status;",
+      "terms": [
+        "GROUP BY",
+        "COUNT"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 32,
+      "stage": "04 · Totals and groups",
+      "title": "Filter busy channels",
+      "find": "Return channels with at least 5 payments, with COUNT(*) named transaction_count.",
+      "columns": [
+        "channel",
+        "transaction_count"
+      ],
+      "sort": "channel ascending",
+      "sql": "SELECT channel,COUNT(*) AS transaction_count FROM transactions GROUP BY channel HAVING COUNT(*)>=5 ORDER BY channel;",
+      "tip": "HAVING filters completed groups; WHERE filters the rows entering them.",
+      "hints": [
+        "Count all statuses per channel.",
+        "The threshold is inclusive.",
+        "Apply the count condition after grouping."
+      ],
+      "wrong": "SELECT channel,COUNT(*) AS transaction_count FROM transactions GROUP BY channel HAVING COUNT(*)>5 ORDER BY channel;",
+      "terms": [
+        "HAVING",
+        "GROUP BY"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 33,
+      "stage": "05 · Connect tables",
+      "title": "Attach regions to payments",
+      "find": "Return every transaction with its account region.",
+      "columns": [
+        "txn_id",
+        "region",
+        "amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT t.txn_id,a.region,t.amount FROM transactions t JOIN accounts a ON a.account_id=t.account_id ORDER BY t.txn_id;",
+      "tip": "A foreign key links each transaction to its account. Aliases keep shared names clear.",
+      "hints": [
+        "Region lives in accounts.",
+        "Match the account_id fields.",
+        "Keep one row per transaction."
+      ],
+      "wrong": "SELECT t.txn_id,a.region,t.amount FROM transactions t JOIN accounts a ON a.account_id=t.txn_id ORDER BY t.txn_id;",
+      "terms": [
+        "JOIN",
+        "Alias"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 34,
+      "stage": "05 · Connect tables",
+      "title": "Count activity including zero",
+      "find": "For every account, count its transactions as transaction_count. Include accounts with zero activity.",
+      "columns": [
+        "account_id",
+        "transaction_count"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT a.account_id,COUNT(t.txn_id) AS transaction_count FROM accounts a LEFT JOIN transactions t ON a.account_id=t.account_id GROUP BY a.account_id ORDER BY a.account_id;",
+      "tip": "A LEFT JOIN creates a NULL-extended row for unmatched accounts. Count a right-side ID, not *.",
+      "hints": [
+        "Preserve the account register.",
+        "Group the matched payments by account.",
+        "Count nonmissing transaction IDs so no activity becomes zero."
+      ],
+      "wrong": "SELECT a.account_id,COUNT(*) AS transaction_count FROM accounts a LEFT JOIN transactions t ON a.account_id=t.account_id GROUP BY a.account_id ORDER BY a.account_id;",
+      "terms": [
+        "LEFT JOIN",
+        "COUNT"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 35,
+      "stage": "05 · Connect tables",
+      "title": "Count posted activity including zero",
+      "find": "For every account, count only posted transactions as posted_count. Keep accounts with no posted transactions.",
+      "columns": [
+        "account_id",
+        "posted_count"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT a.account_id,COUNT(t.txn_id) AS posted_count FROM accounts a LEFT JOIN transactions t ON a.account_id=t.account_id AND t.status='posted' GROUP BY a.account_id ORDER BY a.account_id;",
+      "tip": "Filtering the right table in ON preserves unmatched left rows. Filtering it in WHERE can remove them.",
+      "hints": [
+        "Begin with all accounts.",
+        "Restrict matched payments without removing accounts.",
+        "Put the posted condition in ON or use conditional aggregation."
+      ],
+      "wrong": "SELECT a.account_id,COUNT(t.txn_id) AS posted_count FROM accounts a LEFT JOIN transactions t ON a.account_id=t.account_id WHERE t.status='posted' GROUP BY a.account_id ORDER BY a.account_id;",
+      "terms": [
+        "LEFT JOIN",
+        "WHERE"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 36,
+      "stage": "05 · Connect tables",
+      "title": "Route unresolved payment work",
+      "find": "Join unresolved logs to transactions and accounts. Return one row per unresolved log with customer name and payment status.",
+      "columns": [
+        "log_id",
+        "customer_name",
+        "status"
+      ],
+      "sort": "log_id ascending",
+      "sql": "SELECT l.log_id,a.customer_name,t.status FROM logs l JOIN transactions t ON t.txn_id=l.txn_id JOIN accounts a ON a.account_id=t.account_id WHERE l.resolved_at IS NULL ORDER BY l.log_id;",
+      "tip": "A three-table join follows two relationships: log to transaction, then transaction to account.",
+      "hints": [
+        "Start from the work log.",
+        "Use txn_id for the first link and account_id for the second.",
+        "Filter missing resolution dates after linking."
+      ],
+      "wrong": "SELECT l.log_id,a.customer_name,t.status FROM logs l JOIN transactions t ON t.txn_id=l.txn_id JOIN accounts a ON a.account_id=t.account_id WHERE l.resolved_at IS NOT NULL ORDER BY l.log_id;",
+      "terms": [
+        "JOIN",
+        "NULL"
+      ],
+      "starter": "SELECT *\nFROM logs;"
+    },
+    {
+      "id": 37,
+      "stage": "05 · Connect tables",
+      "title": "Avoid duplicate payment counts",
+      "find": "Count distinct payments having at least one log, per account, as logged_payment_count. Include only accounts with logged payments.",
+      "columns": [
+        "account_id",
+        "logged_payment_count"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT t.account_id,COUNT(DISTINCT t.txn_id) AS logged_payment_count FROM transactions t JOIN logs l ON l.txn_id=t.txn_id GROUP BY t.account_id ORDER BY t.account_id;",
+      "tip": "Joining a payment to several logs repeats that payment. DISTINCT inside COUNT prevents double counting.",
+      "hints": [
+        "A payment can have more than one log.",
+        "Group matched payments by account.",
+        "Count unique payment IDs rather than joined rows."
+      ],
+      "wrong": "SELECT t.account_id,COUNT(*) AS logged_payment_count FROM transactions t JOIN logs l ON l.txn_id=t.txn_id GROUP BY t.account_id ORDER BY t.account_id;",
+      "terms": [
+        "JOIN",
+        "COUNT"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 38,
+      "stage": "06 · Subqueries",
+      "title": "Find above-average payments",
+      "find": "List transactions whose amount exceeds the average across all transactions.",
+      "columns": [
+        "txn_id",
+        "amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT txn_id,amount FROM transactions WHERE amount>(SELECT AVG(amount) FROM transactions) ORDER BY txn_id;",
+      "tip": "A scalar subquery produces a single value that an outer comparison can use.",
+      "hints": [
+        "Calculate the overall mean separately.",
+        "Compare each payment against that mean.",
+        "Equality does not qualify as above average."
+      ],
+      "wrong": "SELECT txn_id,amount FROM transactions WHERE amount>(SELECT SUM(amount) FROM transactions) ORDER BY txn_id;",
+      "terms": [
+        "WHERE",
+        "Query"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 39,
+      "stage": "06 · Subqueries",
+      "title": "Find accounts with failures",
+      "find": "Return each account that has any failed payment, once.",
+      "columns": [
+        "account_id",
+        "customer_name"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT a.account_id,a.customer_name FROM accounts a WHERE EXISTS(SELECT 1 FROM transactions t WHERE t.account_id=a.account_id AND t.status='failed') ORDER BY a.account_id;",
+      "tip": "EXISTS asks whether a matching row exists; it does not multiply the outer row.",
+      "hints": [
+        "Correlate the payment with the current account.",
+        "Test for at least one failed payment.",
+        "Return one row per qualifying account."
+      ],
+      "wrong": "SELECT a.account_id,a.customer_name FROM accounts a JOIN transactions t ON t.account_id=a.account_id WHERE t.status='failed' ORDER BY a.account_id;",
+      "terms": [
+        "WHERE",
+        "Alias"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 40,
+      "stage": "06 · Subqueries",
+      "title": "Find payments without logs",
+      "find": "Return transactions with no matching log of any event or resolution state.",
+      "columns": [
+        "txn_id",
+        "amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT t.txn_id,t.amount FROM transactions t WHERE NOT EXISTS(SELECT 1 FROM logs l WHERE l.txn_id=t.txn_id) ORDER BY t.txn_id;",
+      "tip": "NOT EXISTS expresses absence without relying on a nullable value list.",
+      "hints": [
+        "The absence is in logs, not accounts.",
+        "Correlate the log transaction ID.",
+        "Keep payments for which the matching set is empty."
+      ],
+      "wrong": "SELECT t.txn_id,t.amount FROM transactions t WHERE EXISTS(SELECT 1 FROM logs l WHERE l.txn_id=t.txn_id) ORDER BY t.txn_id;",
+      "terms": [
+        "WHERE",
+        "Query"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 41,
+      "stage": "06 · Subqueries",
+      "title": "Compare within each account",
+      "find": "List payments above the average amount of payments on their own account. Include all statuses when computing averages.",
+      "columns": [
+        "txn_id",
+        "account_id",
+        "amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT t.txn_id,t.account_id,t.amount FROM transactions t WHERE t.amount>(SELECT AVG(x.amount) FROM transactions x WHERE x.account_id=t.account_id) ORDER BY t.txn_id;",
+      "tip": "A correlated subquery can calculate a different benchmark for each outer row.",
+      "hints": [
+        "Do not use the bank-wide average.",
+        "Link the inner account to the outer account.",
+        "Compare amount strictly above that account mean."
+      ],
+      "wrong": "SELECT t.txn_id,t.account_id,t.amount FROM transactions t WHERE t.amount>(SELECT AVG(x.amount) FROM transactions x) ORDER BY t.txn_id;",
+      "terms": [
+        "Alias",
+        "WHERE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 42,
+      "stage": "07 · Conditional reporting",
+      "title": "Band payment amounts",
+      "find": "Label every payment small below 500 AUD, medium from 500 to below 1000, or large at 1000 or above. Name the label amount_band.",
+      "columns": [
+        "txn_id",
+        "amount_band"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT txn_id,CASE WHEN amount<500 THEN 'small' WHEN amount<1000 THEN 'medium' ELSE 'large' END AS amount_band FROM transactions ORDER BY txn_id;",
+      "tip": "CASE uses the first matching branch. Boundary order determines which label wins.",
+      "hints": [
+        "Work from the smallest band upward.",
+        "Exactly 500 is medium; exactly 1000 is large.",
+        "Return the exact lowercase labels."
+      ],
+      "wrong": "SELECT txn_id,CASE WHEN amount<=500 THEN 'small' WHEN amount<=1000 THEN 'medium' ELSE 'large' END AS amount_band FROM transactions ORDER BY txn_id;",
+      "terms": [
+        "CASE",
+        "AS"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 43,
+      "stage": "07 · Conditional reporting",
+      "title": "Sign posted movements",
+      "find": "For each posted transaction, return credits as positive and debits as negative signed_amount.",
+      "columns": [
+        "txn_id",
+        "signed_amount"
+      ],
+      "sort": "txn_id ascending",
+      "sql": "SELECT txn_id,CASE WHEN direction='credit' THEN amount ELSE -amount END AS signed_amount FROM transactions WHERE status='posted' ORDER BY txn_id;",
+      "tip": "A conditional expression can turn direction and amount into a signed value.",
+      "hints": [
+        "Filter posted rows only.",
+        "Choose the sign from direction.",
+        "Return the signed calculation using its alias."
+      ],
+      "wrong": "SELECT txn_id,amount AS signed_amount FROM transactions WHERE status='posted' ORDER BY txn_id;",
+      "terms": [
+        "CASE",
+        "WHERE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 44,
+      "stage": "07 · Conditional reporting",
+      "title": "Pivot status counts",
+      "find": "For each account appearing in transactions, return counts named posted_count, pending_count and failed_count.",
+      "columns": [
+        "account_id",
+        "posted_count",
+        "pending_count",
+        "failed_count"
+      ],
+      "sort": "account_id ascending",
+      "sql": "SELECT account_id,SUM(CASE WHEN status='posted' THEN 1 ELSE 0 END) AS posted_count,SUM(CASE WHEN status='pending' THEN 1 ELSE 0 END) AS pending_count,SUM(CASE WHEN status='failed' THEN 1 ELSE 0 END) AS failed_count FROM transactions GROUP BY account_id ORDER BY account_id;",
+      "tip": "Conditional aggregation turns categories into separate totals within each group.",
+      "hints": [
+        "One row represents one active-in-data account.",
+        "Each category contributes one or zero.",
+        "Sum the three indicators separately."
+      ],
+      "wrong": "SELECT account_id,COUNT(*) AS posted_count,COUNT(*) AS pending_count,COUNT(*) AS failed_count FROM transactions GROUP BY account_id ORDER BY account_id;",
+      "terms": [
+        "CASE",
+        "SUM"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 45,
+      "stage": "07 · Conditional reporting",
+      "title": "Report channel failure rates",
+      "find": "For each channel, return failed payments as a percentage of all its payments, rounded to two decimals, named failure_pct.",
+      "columns": [
+        "channel",
+        "failure_pct"
+      ],
+      "sort": "channel ascending",
+      "sql": "SELECT channel,ROUND(100.0*SUM(CASE WHEN status='failed' THEN 1 ELSE 0 END)/COUNT(*),2) AS failure_pct FROM transactions GROUP BY channel ORDER BY channel;",
+      "tip": "Use a decimal operand to avoid integer division. The denominator defines the rate.",
+      "hints": [
+        "Count failures inside each channel.",
+        "Divide by all payments in that channel.",
+        "Multiply by 100.0 and round to two decimals."
+      ],
+      "wrong": "SELECT channel,ROUND(100*SUM(CASE WHEN status='failed' THEN 1 ELSE 0 END)/COUNT(*),2) AS failure_pct FROM transactions GROUP BY channel ORDER BY channel;",
+      "terms": [
+        "CASE",
+        "COUNT"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 46,
+      "stage": "08 · CTE workflows",
+      "title": "Build daily posted totals",
+      "find": "Use a CTE or equivalent query to report total posted amount per date as posted_total.",
+      "columns": [
+        "txn_date",
+        "posted_total"
+      ],
+      "sort": "txn_date ascending",
+      "sql": "WITH daily AS (SELECT txn_date,SUM(amount) AS posted_total FROM transactions WHERE status='posted' GROUP BY txn_date) SELECT txn_date,posted_total FROM daily ORDER BY txn_date;",
+      "tip": "A CTE names an intermediate result for the duration of one query.",
+      "hints": [
+        "Filter posted rows in the intermediate step.",
+        "Group by date and add amounts.",
+        "Read the named result and order by date."
+      ],
+      "wrong": "WITH daily AS (SELECT txn_date,SUM(amount) AS posted_total FROM transactions GROUP BY txn_date) SELECT txn_date,posted_total FROM daily ORDER BY txn_date;",
+      "terms": [
+        "CTE",
+        "SUM"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 47,
+      "stage": "08 · CTE workflows",
+      "title": "Compare posted and pending exposure",
+      "find": "For every account, return posted and pending gross amounts as posted_total and pending_total. Use zero for absent categories.",
+      "columns": [
+        "account_id",
+        "posted_total",
+        "pending_total"
+      ],
+      "sort": "account_id ascending",
+      "sql": "WITH totals AS (SELECT account_id,SUM(CASE WHEN status='posted' THEN amount ELSE 0 END) AS posted_total,SUM(CASE WHEN status='pending' THEN amount ELSE 0 END) AS pending_total FROM transactions GROUP BY account_id) SELECT a.account_id,COALESCE(t.posted_total,0) AS posted_total,COALESCE(t.pending_total,0) AS pending_total FROM accounts a LEFT JOIN totals t ON t.account_id=a.account_id ORDER BY a.account_id;",
+      "tip": "Pre-aggregate before joining to preserve the intended account-level grain.",
+      "hints": [
+        "Summarize each category per account.",
+        "Join the summary back to every account.",
+        "Replace missing summary totals with zero."
+      ],
+      "wrong": "SELECT account_id,SUM(CASE WHEN status='posted' THEN amount ELSE 0 END) AS posted_total,SUM(CASE WHEN status='pending' THEN amount ELSE 0 END) AS pending_total FROM transactions GROUP BY account_id ORDER BY account_id;",
+      "terms": [
+        "CTE",
+        "COALESCE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 48,
+      "stage": "08 · CTE workflows",
+      "title": "Find above-average account throughput",
+      "find": "For accounts with posted transactions, compute gross posted totals and return those above the average of these account totals. Name the total posted_total.",
+      "columns": [
+        "account_id",
+        "posted_total"
+      ],
+      "sort": "account_id ascending",
+      "sql": "WITH totals AS (SELECT account_id,SUM(amount) AS posted_total FROM transactions WHERE status='posted' GROUP BY account_id) SELECT account_id,posted_total FROM totals WHERE posted_total>(SELECT AVG(posted_total) FROM totals) ORDER BY account_id;",
+      "tip": "An average of account totals differs from an average of individual payments.",
+      "hints": [
+        "Build one posted total per participating account.",
+        "Average the intermediate totals.",
+        "Keep totals strictly above that average."
+      ],
+      "wrong": "WITH totals AS (SELECT account_id,SUM(amount) AS posted_total FROM transactions WHERE status='posted' GROUP BY account_id) SELECT account_id,posted_total FROM totals WHERE posted_total>(SELECT AVG(amount) FROM transactions WHERE status='posted') ORDER BY account_id;",
+      "terms": [
+        "CTE",
+        "WHERE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 49,
+      "stage": "09 · Windows",
+      "title": "Number payments per account",
+      "find": "Number all payments within each account from oldest to newest, breaking date ties by ascending txn_id. Name the number payment_position.",
+      "columns": [
+        "txn_id",
+        "account_id",
+        "payment_position"
+      ],
+      "sort": "account_id ascending, then txn_date ascending, then txn_id ascending",
+      "sql": "SELECT txn_id,account_id,ROW_NUMBER() OVER(PARTITION BY account_id ORDER BY txn_date,txn_id) AS payment_position FROM transactions ORDER BY account_id,txn_date,txn_id;",
+      "tip": "ROW_NUMBER preserves detail and restarts numbering at each partition.",
+      "hints": [
+        "Partition by the account identifier.",
+        "Order within the window by date and ID.",
+        "The final output also needs the requested ordering."
+      ],
+      "wrong": "SELECT txn_id,account_id,ROW_NUMBER() OVER(ORDER BY txn_date,txn_id) AS payment_position FROM transactions ORDER BY account_id,txn_date,txn_id;",
+      "terms": [
+        "ROW_NUMBER",
+        "PARTITION BY"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 50,
+      "stage": "09 · Windows",
+      "title": "Rank tied payment amounts",
+      "find": "Rank payments within each channel by amount descending, using DENSE_RANK as amount_rank. Equal amounts share rank and ranks have no gaps.",
+      "columns": [
+        "txn_id",
+        "channel",
+        "amount_rank"
+      ],
+      "sort": "channel ascending, then amount descending, then txn_id ascending",
+      "sql": "SELECT txn_id,channel,DENSE_RANK() OVER(PARTITION BY channel ORDER BY amount DESC) AS amount_rank FROM transactions ORDER BY channel,amount DESC,txn_id;",
+      "tip": "DENSE_RANK shares a rank for ties. A tie-breaking ID belongs only in the display order here.",
+      "hints": [
+        "Partition by channel.",
+        "Rank by amount alone so equal amounts stay tied.",
+        "Use the no-gaps ranking function."
+      ],
+      "wrong": "SELECT txn_id,channel,ROW_NUMBER() OVER(PARTITION BY channel ORDER BY amount DESC,txn_id) AS amount_rank FROM transactions ORDER BY channel,amount DESC,txn_id;",
+      "terms": [
+        "Window function",
+        "OVER"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 51,
+      "stage": "09 · Windows",
+      "title": "Keep the two newest payments",
+      "find": "Return at most two payments per account across all statuses. Newest means txn_date descending then txn_id descending.",
+      "columns": [
+        "account_id",
+        "txn_id"
+      ],
+      "sort": "account_id ascending, then txn_date descending, then txn_id descending",
+      "sql": "WITH ranked AS (SELECT *,ROW_NUMBER() OVER(PARTITION BY account_id ORDER BY txn_date DESC,txn_id DESC) AS rn FROM transactions) SELECT account_id,txn_id FROM ranked WHERE rn<=2 ORDER BY account_id,txn_date DESC,txn_id DESC;",
+      "tip": "Filter a window result in an outer query because WHERE runs before windows.",
+      "hints": [
+        "Rank every account separately.",
+        "Use date and ID descending inside the window.",
+        "Filter ranks up to two outside the window query."
+      ],
+      "wrong": "WITH ranked AS (SELECT *,ROW_NUMBER() OVER(PARTITION BY account_id ORDER BY txn_date DESC,txn_id DESC) AS rn FROM transactions) SELECT account_id,txn_id FROM ranked WHERE rn=1 ORDER BY account_id,txn_date DESC,txn_id DESC;",
+      "terms": [
+        "CTE",
+        "ROW_NUMBER"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 52,
+      "stage": "09 · Windows",
+      "title": "Compare the previous amount",
+      "find": "For every transaction, show the previous amount on the same account as previous_amount. Order by date then txn_id; the first payment has NULL.",
+      "columns": [
+        "txn_id",
+        "account_id",
+        "previous_amount"
+      ],
+      "sort": "account_id ascending, then txn_date ascending, then txn_id ascending",
+      "sql": "SELECT txn_id,account_id,LAG(amount) OVER(PARTITION BY account_id ORDER BY txn_date,txn_id) AS previous_amount FROM transactions ORDER BY account_id,txn_date,txn_id;",
+      "tip": "LAG reads an earlier row without removing the current one. The default for no earlier row is NULL.",
+      "hints": [
+        "Use all statuses in the sequence.",
+        "Restart at each account.",
+        "Read the previous amount, not the next amount."
+      ],
+      "wrong": "SELECT txn_id,account_id,LEAD(amount) OVER(PARTITION BY account_id ORDER BY txn_date,txn_id) AS previous_amount FROM transactions ORDER BY account_id,txn_date,txn_id;",
+      "terms": [
+        "Window function",
+        "PARTITION BY"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 53,
+      "stage": "09 · Windows",
+      "title": "Measure days between payments",
+      "find": "For every transaction, calculate days since the previous transaction on its account as gap_days. Order by date then txn_id; first rows have NULL.",
+      "columns": [
+        "txn_id",
+        "gap_days"
+      ],
+      "sort": "account_id ascending, then txn_date ascending, then txn_id ascending",
+      "sql": "SELECT txn_id,julianday(txn_date)-julianday(LAG(txn_date) OVER(PARTITION BY account_id ORDER BY txn_date,txn_id)) AS gap_days FROM transactions ORDER BY account_id,txn_date,txn_id;",
+      "tip": "julianday converts dates to comparable day values. Same-day payments have a zero gap.",
+      "hints": [
+        "Obtain the preceding date within the account.",
+        "Convert both dates before subtracting.",
+        "Keep NULL for the first payment."
+      ],
+      "wrong": "SELECT txn_id,julianday(txn_date)-julianday(LAG(txn_date) OVER(ORDER BY txn_date,txn_id)) AS gap_days FROM transactions ORDER BY account_id,txn_date,txn_id;",
+      "terms": [
+        "Window function",
+        "NULL"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 54,
+      "stage": "09 · Windows",
+      "title": "Calculate a three-payment average",
+      "find": "For each posted payment, calculate the average amount of it and up to two preceding posted payments on the same account as rolling_average, rounded to two decimals. Order the window by date then txn_id.",
+      "columns": [
+        "txn_id",
+        "rolling_average"
+      ],
+      "sort": "account_id ascending, then txn_date ascending, then txn_id ascending",
+      "sql": "SELECT txn_id,ROUND(AVG(amount) OVER(PARTITION BY account_id ORDER BY txn_date,txn_id ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),2) AS rolling_average FROM transactions WHERE status='posted' ORDER BY account_id,txn_date,txn_id;",
+      "tip": "A ROWS frame counts physical rows, so a three-payment average is different from a three-day average.",
+      "hints": [
+        "Filter posted payments before the window.",
+        "Include the current row and two preceding rows.",
+        "Partial starting windows use the rows available."
+      ],
+      "wrong": "SELECT txn_id,ROUND(AVG(amount) OVER(PARTITION BY account_id ORDER BY txn_date,txn_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),2) AS rolling_average FROM transactions WHERE status='posted' ORDER BY account_id,txn_date,txn_id;",
+      "terms": [
+        "Window function",
+        "OVER"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 55,
+      "stage": "10 · Operations analytics",
+      "title": "Measure channel share of posted value",
+      "find": "For each channel with posted payments, return its percentage of bank-wide gross posted value as share_pct, rounded to two decimals.",
+      "columns": [
+        "channel",
+        "share_pct"
+      ],
+      "sort": "channel ascending",
+      "sql": "WITH totals AS (SELECT channel,SUM(amount) AS total FROM transactions WHERE status='posted' GROUP BY channel) SELECT channel,ROUND(100.0*total/SUM(total) OVER(),2) AS share_pct FROM totals ORDER BY channel;",
+      "tip": "A window over grouped totals can supply a denominator without collapsing channel rows.",
+      "hints": [
+        "Group posted amounts by channel.",
+        "Compute the sum across those channel totals.",
+        "Use decimal percentage arithmetic."
+      ],
+      "wrong": "WITH totals AS (SELECT channel,SUM(amount) AS total FROM transactions WHERE status='posted' GROUP BY channel) SELECT channel,ROUND(100.0*total/COUNT(*) OVER(),2) AS share_pct FROM totals ORDER BY channel;",
+      "terms": [
+        "CTE",
+        "Window function"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 56,
+      "stage": "10 · Operations analytics",
+      "title": "Measure unresolved queue ages",
+      "find": "For every unresolved log, calculate days from its payment date to the fixed reporting date 2026-11-01 as age_days.",
+      "columns": [
+        "log_id",
+        "age_days"
+      ],
+      "sort": "log_id ascending",
+      "sql": "SELECT l.log_id,julianday('2026-11-01')-julianday(t.txn_date) AS age_days FROM logs l JOIN transactions t ON t.txn_id=l.txn_id WHERE l.resolved_at IS NULL ORDER BY l.log_id;",
+      "tip": "Use a fixed as-of date for a reproducible operational report rather than the device clock.",
+      "hints": [
+        "Follow each log to its payment date.",
+        "Keep unresolved work only.",
+        "Subtract the payment day value from the reporting day value."
+      ],
+      "wrong": "SELECT l.log_id,julianday(t.txn_date)-julianday('2026-11-01') AS age_days FROM logs l JOIN transactions t ON t.txn_id=l.txn_id WHERE l.resolved_at IS NULL ORDER BY l.log_id;",
+      "terms": [
+        "JOIN",
+        "NULL"
+      ],
+      "starter": "SELECT *\nFROM logs;"
+    },
+    {
+      "id": 57,
+      "stage": "10 · Operations analytics",
+      "title": "Reconcile regional net movement",
+      "find": "For every region in accounts, total posted credits minus posted debits as net_movement. Regions with no posted activity must show zero.",
+      "columns": [
+        "region",
+        "net_movement"
+      ],
+      "sort": "region ascending",
+      "sql": "SELECT a.region,COALESCE(SUM(CASE WHEN t.status='posted' AND t.direction='credit' THEN t.amount WHEN t.status='posted' AND t.direction='debit' THEN -t.amount ELSE 0 END),0) AS net_movement FROM accounts a LEFT JOIN transactions t ON t.account_id=a.account_id GROUP BY a.region ORDER BY a.region;",
+      "tip": "Gross activity adds amounts; net movement applies a direction sign. Preserve the complete region register.",
+      "hints": [
+        "Start from accounts so empty regions survive.",
+        "Ignore pending and failed movements.",
+        "Aggregate signed posted amounts by region."
+      ],
+      "wrong": "SELECT a.region,COALESCE(SUM(CASE WHEN t.status='posted' THEN t.amount ELSE 0 END),0) AS net_movement FROM accounts a LEFT JOIN transactions t ON t.account_id=a.account_id GROUP BY a.region ORDER BY a.region;",
+      "terms": [
+        "CASE",
+        "LEFT JOIN"
+      ],
+      "starter": "SELECT *\nFROM accounts;"
+    },
+    {
+      "id": 58,
+      "stage": "10 · Operations analytics",
+      "title": "Quantify every balance variance",
+      "find": "For every account, calculate reported balance minus (opening balance plus signed posted movement) as variance. Include zero variances and accounts without activity.",
+      "columns": [
+        "account_id",
+        "variance"
+      ],
+      "sort": "account_id ascending",
+      "sql": "WITH movements AS (SELECT account_id,SUM(CASE WHEN direction='credit' THEN amount ELSE -amount END) AS net FROM transactions WHERE status='posted' GROUP BY account_id) SELECT a.account_id,a.reported_balance-a.opening_balance-COALESCE(m.net,0) AS variance FROM accounts a LEFT JOIN movements m ON m.account_id=a.account_id ORDER BY a.account_id;",
+      "tip": "A reconciliation variance needs a stated sign convention. Zero indicates agreement.",
+      "hints": [
+        "Compute signed posted movement first.",
+        "Treat missing movement as zero.",
+        "Subtract calculated balance from reported balance."
+      ],
+      "wrong": "WITH movements AS (SELECT account_id,SUM(CASE WHEN direction='credit' THEN amount ELSE -amount END) AS net FROM transactions WHERE status='posted' GROUP BY account_id) SELECT a.account_id,a.opening_balance+COALESCE(m.net,0)-a.reported_balance AS variance FROM accounts a LEFT JOIN movements m ON m.account_id=a.account_id ORDER BY a.account_id;",
+      "terms": [
+        "CTE",
+        "COALESCE"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    },
+    {
+      "id": 59,
+      "stage": "10 · Operations analytics",
+      "title": "Return every regional debit peak",
+      "find": "For each region with posted debit payments, return all payments tied for its largest posted debit amount. Include every tied payment.",
+      "columns": [
+        "region",
+        "txn_id",
+        "amount"
+      ],
+      "sort": "region ascending, then txn_id ascending",
+      "sql": "WITH ranked AS (SELECT a.region,t.txn_id,t.amount,DENSE_RANK() OVER(PARTITION BY a.region ORDER BY t.amount DESC) AS rn FROM transactions t JOIN accounts a ON a.account_id=t.account_id WHERE t.status='posted' AND t.direction='debit') SELECT region,txn_id,amount FROM ranked WHERE rn=1 ORDER BY region,txn_id;",
+      "tip": "Filtering, joining and ranking combine into an operational exception report. Ranking by amount alone preserves ties.",
+      "hints": [
+        "Filter to posted debits before ranking.",
+        "Rank amounts within the account region.",
+        "Keep every rank-one row; do not break the window tie with txn_id."
+      ],
+      "wrong": "WITH ranked AS (SELECT a.region,t.txn_id,t.amount,ROW_NUMBER() OVER(PARTITION BY a.region ORDER BY t.amount DESC,t.txn_id) AS rn FROM transactions t JOIN accounts a ON a.account_id=t.account_id WHERE t.status='posted' AND t.direction='debit') SELECT region,txn_id,amount FROM ranked WHERE rn=1 ORDER BY region,txn_id;",
+      "terms": [
+        "CTE",
+        "Window function"
+      ],
+      "starter": "SELECT *\nFROM transactions;"
+    }
+  ]
+}
