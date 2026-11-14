@@ -1,6 +1,13 @@
 {
   "name": "sql-lab",
   "private": true,
-  "scripts": {"build": "node scripts/build.cjs", "test": "node scripts/test.cjs"},
-  "devDependencies": {"playwright": "1.65.0"}
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "test": "node scripts/test.cjs",
+    "test:release": "node scripts/release-test.cjs",
+    "test:safety": "node scripts/release-safety.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.65.0"
+  }
 }
