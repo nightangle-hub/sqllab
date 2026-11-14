@@ -1,0 +1,31 @@
+const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
+const {chromium,webkit}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'test-results','responsive');fs.mkdirSync(out,{recursive:true});
+const baseline=path.join(out,'baseline.html');
+fs.writeFileSync(baseline,require('child_process').execFileSync('git',['show','5c50dc403ebb115bbafe5bbb2befbea619f4c402:index.html'],{cwd:root,maxBuffer:10*1024*1024}));
+const file=p=>'file:///'+p.replace(/\\/g,'/');
+const report={layouts:[],checks:[],errors:[]};
+async function ready(p){await p.waitForFunction(()=>ready&&!busy&&dataCache);}
+function geometry(){const rect=id=>{let r=document.getElementById(id).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}};return {overflow:document.documentElement.scrollWidth>innerWidth,query:rect('query'),run:rect('run'),coach:rect('coachPanel'),task:rect('task'),data:rect('dataPanel'),workspace:document.querySelector('.workspace')?.getBoundingClientRect().toJSON(),font:getComputedStyle(document.getElementById('query')).fontSize};}
+(async()=>{for(const engine of [chromium,webkit]){const browser=await engine.launch();try{const context=await browser.newContext();await context.setOffline(true);const p=await context.newPage();p.on('pageerror',e=>report.errors.push(e.message));
+for(const width of [320,375,390,430,1024,1280,1440])for(const height of [568,900]){
+ await p.setViewportSize({width,height});await p.goto(file(path.join(root,'index.html')));await ready(p);
+ for(const id of [12,36,59]){await p.evaluate(id=>chooseCase(id),id);await ready(p);let g=await p.evaluate(geometry);assert.equal(await p.locator('.workspace #coachPanel').count(),1);assert.equal(g.overflow,false);assert.equal(g.run.y-g.query.bottom,8);assert.equal(g.font,'16px');assert.ok(g.run.height>=48);assert.ok(g.coach.y>=g.run.bottom);if(width>=960)assert.ok(g.workspace.x>g.task.x);else assert.ok(g.query.y>g.data.y);report.layouts.push({engine:engine.name(),width,height,id,...g});}
+ await p.evaluate(()=>chooseCase(12));await ready(p);await p.screenshot({path:path.join(out,`${engine.name()}-${width}-${height}-after.png`),fullPage:true});
+ await p.goto(file(baseline));await ready(p);await p.evaluate(()=>chooseCase(12));await ready(p);await p.screenshot({path:path.join(out,`${engine.name()}-${width}-${height}-before.png`),fullPage:true});
+}
+await p.goto(file(path.join(root,'index.html')));await ready(p);
+for(const width of [320,390,1024,1440]){
+ await p.setViewportSize({width,height:568});await p.evaluate(()=>chooseCase(59));await ready(p);await p.locator('#moreData').click();assert.equal(await p.locator('#dataExtras').isVisible(),true);assert.equal((await p.evaluate(geometry)).overflow,false);await p.locator('#backToEditor').click();assert.equal(await p.evaluate(()=>document.activeElement.id),'query');let g=await p.evaluate(geometry);assert.ok(g.query.y>=0&&g.run.bottom<=568,'Return shows editor and Run');
+ await p.locator('#query').fill('SELECT missing FROM accounts');await p.locator('#query').press('Control+Enter');await ready(p);assert.ok(await p.locator('#status').innerText());await p.locator('#coachPanel summary').click();await p.locator('#hint').click();await p.locator('#explain').click();await p.screenshot({path:path.join(out,`${engine.name()}-${width}-error-coach.png`),fullPage:true});await p.locator('#hint').press('Escape');assert.equal(await p.evaluate(()=>document.activeElement.id),'query');
+ await p.locator('#query').fill(await p.evaluate(()=>current()[4]));await p.locator('#query').press('Control+Enter');await ready(p);assert.match(await p.locator('#status').innerText(),/Correct/);assert.equal((await p.evaluate(geometry)).overflow,false);await p.screenshot({path:path.join(out,`${engine.name()}-${width}-success.png`),fullPage:true});
+ report.checks.push({engine:engine.name(),width,expandedData:true,returnFocus:true,runVisible:true,error:true,coach:true,escape:true,shortcut:true,success:true});
+}
+// Reduced viewport is a keyboard-occlusion proxy, not an iOS software keyboard.
+await p.setViewportSize({width:390,height:320});await p.evaluate(()=>chooseCase(12));await ready(p);await p.locator('#query').focus();await p.evaluate(()=>document.getElementById('query').scrollIntoView({block:'start'}));let g=await p.evaluate(geometry);assert.ok(g.run.bottom<=320);report.checks.push({engine:engine.name(),keyboardProxyHeight:320,runVisible:true});
+await p.setViewportSize({width:1280,height:720});await p.evaluate(()=>document.documentElement.style.zoom='2');assert.equal((await p.evaluate(geometry)).overflow,false);report.checks.push({engine:engine.name(),cssZoom:'200%',overflow:false});await p.evaluate(()=>document.documentElement.style.zoom='');
+await p.setViewportSize({width:390,height:720});await p.evaluate(()=>chooseCase(12));await ready(p);await p.locator('.skip').focus();await p.locator('.skip').press('Enter');assert.equal(await p.evaluate(()=>document.activeElement.id),'query');await p.locator('#query').press('Tab');assert.equal(await p.evaluate(()=>document.activeElement.id),'run');report.checks.push({engine:engine.name(),skipAndTab:true});
+await context.close();
+for(const width of [320,375,390,430]){const touch=await browser.newContext({viewport:{width,height:720},isMobile:true,hasTouch:true,deviceScaleFactor:3});await touch.setOffline(true);const t=await touch.newPage();await t.goto(file(path.join(root,'index.html')));await ready(t);await t.locator('#query').tap();await t.locator('#query').fill(await t.evaluate(()=>current()[4]));await t.locator('#run').tap();await ready(t);assert.match(await t.locator('#status').innerText(),/Correct/);assert.equal((await t.evaluate(geometry)).overflow,false);report.checks.push({engine:engine.name(),touchViewport:width,runTap:true,softwareKeyboard:false});await touch.close();}
+}finally{await browser.close();}}
+assert.deepEqual(report.errors,[]);fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({layouts:report.layouts.length,checks:report.checks.length,errors:report.errors}));})().catch(e=>{console.error(e);process.exitCode=1});
