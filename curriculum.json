@@ -552,7 +552,7 @@
       "sql": "SELECT channel,COUNT(*) AS transaction_count FROM transactions GROUP BY channel HAVING COUNT(*)>=5 ORDER BY channel;",
       "tip": "HAVING filters completed groups; WHERE filters the rows entering them.",
       "hints": [
-        "Count all statuses per channel.",
+        "At least 5 includes a channel with exactly five payments.",
         "The threshold is inclusive.",
         "Apply the count condition after grouping."
       ],
@@ -907,8 +907,8 @@
     {
       "id": 47,
       "stage": "08 · CTE workflows",
-      "title": "Compare posted and pending exposure",
-      "find": "For every account, return posted and pending gross amounts as posted_total and pending_total. Use zero for absent categories.",
+      "title": "Compare posted and pending activity",
+      "find": "For every account, return posted and pending gross transaction amounts as posted_total and pending_total. Add both credit and debit amounts without netting. Use zero for absent categories.",
       "columns": [
         "account_id",
         "posted_total",
@@ -1104,7 +1104,7 @@
       "id": 55,
       "stage": "10 · Operations analytics",
       "title": "Measure channel share of posted value",
-      "find": "For each channel with posted payments, return its percentage of bank-wide gross posted value as share_pct, rounded to two decimals.",
+      "find": "For each channel with posted payments, return its percentage of bank-wide gross posted value as share_pct, rounded to two decimals. If the bank-wide posted value is zero, return NULL for the percentage.",
       "columns": [
         "channel",
         "share_pct"
@@ -1127,7 +1127,7 @@
     {
       "id": 56,
       "stage": "10 · Operations analytics",
-      "title": "Measure unresolved queue ages",
+      "title": "Measure unresolved payment ages",
       "find": "For every unresolved log, calculate days from its payment date to the fixed reporting date 2026-11-01 as age_days.",
       "columns": [
         "log_id",
@@ -1135,7 +1135,7 @@
       ],
       "sort": "log_id ascending",
       "sql": "SELECT l.log_id,julianday('2026-11-01')-julianday(t.txn_date) AS age_days FROM logs l JOIN transactions t ON t.txn_id=l.txn_id WHERE l.resolved_at IS NULL ORDER BY l.log_id;",
-      "tip": "Use a fixed as-of date for a reproducible operational report rather than the device clock.",
+      "tip": "This is age since the payment date, not time in the work queue: logs have no creation timestamp. A fixed as-of date keeps the report reproducible.",
       "hints": [
         "Follow each log to its payment date.",
         "Keep unresolved work only.",
@@ -1151,7 +1151,7 @@
     {
       "id": 57,
       "stage": "10 · Operations analytics",
-      "title": "Reconcile regional net movement",
+      "title": "Report regional net movement",
       "find": "For every region in accounts, total posted credits minus posted debits as net_movement. Regions with no posted activity must show zero.",
       "columns": [
         "region",

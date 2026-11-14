@@ -20,7 +20,7 @@ Drafts, completion and assisted markers save in this browser when storage is ava
 
 Edit metadata and run `npm run build` to embed it into the single downloadable `index.html`. The JSON source is not fetched at runtime. Each new object contains task, columns, sort contract, reference SQL, starter, explanation, three hints, term chips and a deliberately wrong query for regression testing. Equivalent SQLite queries pass when their results match; the grader does not require specific syntax such as WITH.
 
-Every answer is executed against its practice dataset and five hidden fixtures. These vary IDs, dates, amounts, names, regions, channels and membership, and include thresholds, ties, duplicate logs and empty transaction/log tables. Grading checks names/order of columns, values, duplicate multiplicity and required row order. This is finite result-based testing, not a proof for every possible dataset.
+Every answer is executed against its practice dataset and six hidden fixtures. These vary IDs, dates, amounts, names, regions, channels and membership, and include thresholds, ties, duplicate logs and empty transaction/log tables. Grading checks names/order of columns, values, duplicate multiplicity and required row order. This is finite result-based testing, not a proof for every possible dataset.
 
 ## Run verification
 
@@ -31,6 +31,8 @@ npm ci
 npx playwright install chromium webkit
 npm run build
 npm test
+npm run test:release
+npm run test:safety
 ```
 
 On Linux, use `npx playwright install --with-deps chromium webkit` if browser system dependencies are missing. Tests write screenshots and detailed JSON to ignored `test-results/`. Baseline contracts in `scripts/original-regression.json` were captured from main commit `dc0314fb9bf94f9474f0672c23c78cdd0fa56c06`; do not regenerate them to hide a regression.
@@ -42,3 +44,5 @@ See [VERIFICATION.md](VERIFICATION.md) for exact coverage and device limitations
 [SQLBolt](https://sqlbolt.com/) informed short concept explanations, visible practice tasks and a gradual progression. All banking tasks, data and wording here are original; no SQLBolt text, puzzles or assets were copied.
 
 This expansion is prepared on a feature branch for review. It must not be merged or published without the owner's explicit approval.
+
+The independent release QA fixes and exact coverage are in VERIFICATION.md; prioritized before/after evidence is in ISSUES.md. The QA PR targets feature/sql-learning-path-60 for review. Nothing is merged or deployed.

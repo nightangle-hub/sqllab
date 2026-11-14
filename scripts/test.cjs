@@ -27,7 +27,7 @@ for(const engine of [chromium,webkit]){
  for(let variant=0;variant<4;variant++){
   const results=await page.evaluate(({variant,metadata})=>{
    const {SQL,seed,execute}=testEngine;const failures=[],kills=[],checks=[],frozen=new Map(),hardcodeRejected=new Set();
-   for(let fixture=0;fixture<6;fixture++){
+   for(let fixture=0;fixture<7;fixture++){
     const db=new SQL.Database();try{seed(db,variant,fixture);
      const data=Object.fromEntries(['accounts','transactions','logs'].map(t=>{const r=execute(db,'SELECT * FROM '+t);return [t,r.values.map(row=>Object.fromEntries(r.columns.map((c,i)=>[c,row[i]])))];}));
      const assert=(ok,detail)=>{if(!ok)failures.push({variant,fixture,detail});};
@@ -86,9 +86,9 @@ for(const engine of [chromium,webkit]){
  if(engine===chromium){const cdp=await context.newCDPSession(page);await cdp.send('Emulation.setEmulatedMedia',{features:[{name:'display-mode',value:'standalone'}]});report.layout.push({engine:engine.name(),check:'standalone media emulation availability',supported:await page.evaluate(()=>matchMedia('(display-mode: standalone)').matches)});}
  await page.evaluate(()=>{document.getElementById('options').open=true;scrollTo(0,300)});assert.ok((await page.evaluate(geometry)).top<0,'in-flow header scrolls');
  await context.setOffline(true);await page.goto('file:///'+path.join(root,'index.html').replace(/\\/g,'/'));await ready(page);assert.match(await answer(page,await page.evaluate(()=>current()[4])),/Correct/);report.ui.push({engine:engine.name(),check:'cold local-file startup offline'});
- console.log(engine.name()+': 1440 canonical fixture executions, 48 mutants rejected, UI/mobile/offline checks passed');
+ console.log(engine.name()+': 1680 canonical fixture executions, 48 mutants rejected, UI/mobile/offline checks passed');
  }finally{await browser.close();}
 }
-assert.deepEqual(report.errors,[]);assert.deepEqual(report.externalRequests,[]);report.summary={engines:2,canonicalFixtureExecutions:report.matrix.length,newExerciseMutantsRejected:48,perEngineVariants:4,fixturesPerVariant:6,originalResultComparisons:288,independentOracleChecks:336,uiChecks:report.ui.length,layoutChecks:report.layout.filter(r=>!r.check).length,standaloneMediaEmulationSupported:report.layout.find(r=>r.check)?.supported,externalRequests:0,pageErrors:0};
+assert.deepEqual(report.errors,[]);assert.deepEqual(report.externalRequests,[]);report.summary={engines:2,canonicalFixtureExecutions:report.matrix.length,newExerciseMutantsRejected:48,perEngineVariants:4,fixturesPerVariant:7,originalResultComparisons:288,independentOracleChecks:392,uiChecks:report.ui.length,layoutChecks:report.layout.filter(r=>!r.check).length,standaloneMediaEmulationSupported:report.layout.find(r=>r.check)?.supported,externalRequests:0,pageErrors:0};
 fs.writeFileSync(path.join(out,'verification.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report.summary,null,2));
 })().catch(e=>{console.error(e);process.exitCode=1}).finally(()=>server.close());
