@@ -46,3 +46,7 @@ See [VERIFICATION.md](VERIFICATION.md) for exact coverage and device limitations
 This expansion is prepared on a feature branch for review. It must not be merged or published without the owner's explicit approval.
 
 The independent release QA fixes and exact coverage are in VERIFICATION.md; prioritized before/after evidence is in ISSUES.md. The QA PR targets feature/sql-learning-path-60 for review. Nothing is merged or deployed.
+
+## Responsive layout review
+
+Desktop uses a bounded two-column reference/workspace layout from 960px; smaller screens use task, data preview, editor, Run and contextual Coach in sequence. See [RESPONSIVE-VERIFICATION.md](RESPONSIVE-VERIFICATION.md) for evidence and remaining physical-iPhone checks. Run `npm run test:all` for all existing suites with accessibility scans, and `npm run test:responsive` for the before/after viewport matrix.
